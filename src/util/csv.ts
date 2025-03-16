@@ -1,32 +1,6 @@
 import Fuse from 'npm:fuse.js';
 import { Member } from '../get-rotaract-org.ts';
 
-export async function createCsvFile(
-    rotaryMembers: { name: string; email: string; club: string }[],
-) {
-    const dateString = new Date().toISOString().split('T')[0];
-    const fileName = `memberships-${dateString}.csv`;
-    const headers = 'Name (rotary.org),Email (rotary.org),club (rotary.org)';
-    const rows = rotaryMembers.map((m) => `${m.name},${m.email},${m.club}`);
-    const csvContent = [headers, ...rows].join('\n');
-    await Deno.writeTextFile(fileName, csvContent);
-}
-
-export function createRotaractBgCsvFile(rotaractMembers: Member[]) {
-    const sortedMembers = rotaractMembers.sort((a, b) => {
-        const clubComparison = a.club.localeCompare(b.club);
-        return clubComparison !== 0
-            ? clubComparison
-            : a.name.localeCompare(b.name);
-    });
-    const headers = 'Name(rotaract-bg.org),Club(rotaract-bg.org)';
-    const rows = sortedMembers.map((m) =>
-        `${m.cyrillicName || m.name},${m.club}`
-    );
-    const csvContent = [headers, ...rows].join('\n');
-    return csvContent;
-}
-
 /**
  * Generates a CSV diff comparing rotaryMembers and rotaractMembers by name & club.
  * Missing entries in one source are shown as "Missing" in the corresponding columns.
